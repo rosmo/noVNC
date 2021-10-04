@@ -1751,16 +1751,18 @@ export default class RFB extends EventTargetMixin {
         if (!this._viewOnly) { this._keyboard.grab(); }
 
         this._fbDepth = 24;
-
+        this._bpp = 24;
         if (this._fbName === "Intel(r) AMT KVM") {
             Log.Warn("Intel AMT KVM only supports 8/16 bit depths. Using low color mode.");
             this._fbDepth = 8;
+        }
+        if (this._fbName === "reMarkable rfb") {
+            this._bpp = 16;
         }
 
         RFB.messages.pixelFormat(this._sock, this._fbDepth, true);
         this._sendEncodings();
         RFB.messages.fbUpdateRequest(this._sock, false, 0, 0, this._fbWidth, this._fbHeight);
-
         this._updateConnectionState('connected');
         return true;
     }
@@ -2478,7 +2480,7 @@ export default class RFB extends EventTargetMixin {
             return decoder.decodeRect(this._FBU.x, this._FBU.y,
                                       this._FBU.width, this._FBU.height,
                                       this._sock, this._display,
-                                      this._fbDepth);
+                                      this._fbDepth, this._bpp);
         } catch (err) {
             this._fail("Error decoding rect: " + err);
             return false;

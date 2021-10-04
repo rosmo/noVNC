@@ -398,6 +398,14 @@ export default class Display {
         this._damage(x, y, img.width, img.height);
     }
 
+    rgb565To888(arr) {
+        const val = (arr[1] << 8) | arr[0];
+        const red = (val & 0xf800) >> 11;
+        const green = (val & 0x07e0) >> 5;
+        const blue = (val & 0x001f);
+        return [(red * 527 + 23) >> 6, (green * 259 + 33 ) >> 6, (blue * 527 + 23 ) >> 6];
+    }
+
     autoscale(containerWidth, containerHeight) {
         let scaleRatio;
 
